@@ -3,38 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cinetech - Accueil</title>
-  <link rel="stylesheet" href="./css/style.css">
+  <title>Cinetech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header>
-    <h1>Cinetech</h1>
-    <input type="text" id="recherche" placeholder="Rechercher un film ou une série...">
-  </header>
-
-  <main>
-    <section class="genres">
-      <h2>Genres :</h2>
-      <ul>
-        <li>Action</li>
-        <li>Comédie</li>
-        <li>Romance</li>
-        <li>Science-Fiction</li>
-        <li>Documentaire</li>
+<body class="bg-[#f3ebff] text-gray-800">
+  <div class="flex min-h-screen">
+    
+    <!-- Barre latérale Genres -->
+    <aside class="w-1/5 bg-purple-300 p-4">
+      <h2 class="text-center text-white bg-purple-700 py-2 rounded-xl mb-4">GENRES :</h2>
+      <ul class="space-y-3">
+        <li class="bg-white py-2 text-center rounded cursor-pointer hover:bg-purple-200">Action</li>
+        <li class="bg-white py-2 text-center rounded cursor-pointer hover:bg-purple-200">Romance</li>
+        <li class="bg-white py-2 text-center rounded cursor-pointer hover:bg-purple-200">Comédie</li>
+        <li class="bg-white py-2 text-center rounded cursor-pointer hover:bg-purple-200">Drame</li>
+        <li class="bg-white py-2 text-center rounded cursor-pointer hover:bg-purple-200">Animation</li>
       </ul>
-    </section>
+    </aside>
 
-    <section class="films-populaires">
-      <h2>Films Populaires</h2>
-      <div id="films-container"></div>
-    </section>
+    <!-- Contenu principal -->
+    <main class="flex-1 p-6 space-y-10">
 
-    <section class="series-populaires">
-      <h2>Séries Populaires</h2>
-      <div id="series-container"></div>
-    </section>
-  </main>
+      <!-- Header recherche -->
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Cinetech</h1>
+        <input type="text" id="recherche" placeholder="Rechercher..." class="p-2 rounded border w-80">
+      </div>
 
-  <script src="assets/js/main.js"></script>
+      <!-- Films Populaires -->
+      <section>
+        <h2 class="text-xl font-semibold mb-2">Films Populaires</h2>
+        <div id="carousel-films" class="flex gap-4 overflow-x-auto pb-2">
+          <!-- Cartes de films injectées ici -->
+        </div>
+      </section>
+
+      <!-- Séries Populaires -->
+      <section>
+        <h2 class="text-xl font-semibold mb-2">Séries Populaires</h2>
+        <div id="carousel-series" class="flex gap-4 overflow-x-auto pb-2">
+          <!-- Cartes de séries injectées ici -->
+        </div>
+      </section>
+
+      <!-- Boutons d’accès pages films / séries -->
+      <div class="flex justify-center gap-10">
+        <a href="films.html" class="bg-purple-700 text-white text-xl px-6 py-3 rounded-2xl hover:bg-purple-800">FILMS</a>
+        <a href="series.html" class="bg-purple-700 text-white text-xl px-6 py-3 rounded-2xl hover:bg-purple-800">SÉRIES</a>
+      </div>
+
+      <!-- Zone de commentaires -->
+      <section class="bg-purple-100 rounded-xl p-4 mt-6">
+        <h2 class="text-lg font-bold mb-2">Commentaires :</h2>
+        <div id="commentaires" class="space-y-2">
+          <!-- Commentaires depuis JSON -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="./js/main.js"></script>
 </body>
 </html>
