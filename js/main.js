@@ -1,4 +1,4 @@
-const API_KEY = "TA_CLE_API";
+const API_KEY = "fb44f61bb09329fa7623088a309d6919";  // clé APi ici
 const URL_BASE = "https://api.themoviedb.org/3";
 
 // Chargement au lancement
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function chargerFilms() {
-  fetch(`${URL_BASE}/movie/popular?api_key=${API_KEY}&language=fr-FR`)
+  fetch(`/api/movies/popular`) // Appel au backend
     .then(res => res.json())
     .then(data => {
       const conteneur = document.getElementById("carousel-films");
@@ -24,7 +24,8 @@ function chargerFilms() {
         `;
         conteneur.appendChild(div);
       });
-    });
+    })
+    .catch(error => console.error('Erreur lors du chargement des films :', error));
 }
 
 function chargerSeries() {
