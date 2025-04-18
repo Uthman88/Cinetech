@@ -5,7 +5,7 @@ export async function renderMovieCarousel(containerId) {
         const movies = await fetchPopularMovies();
         const container = document.getElementById(containerId);
 
-        movies.slice(0, 10).forEach(movie => {
+        movies.slice(0, 6).forEach(movie => {
             const card = document.createElement('div');
             card.className = "w-40 m-2 shrink-0 bg-white rounded-lg shadow";
             card.innerHTML = `
@@ -26,7 +26,7 @@ export async function renderSeriesCarousel(containerId) {
         const series = await fetchPopularSeries();
         const container = document.getElementById(containerId);
 
-        series.slice(0, 10).forEach(serie => {
+        series.slice(0, 6).forEach(serie => {
             const card = document.createElement('div');
             card.className = "w-40 m-2 shrink-0 bg-white rounded-lg shadow";
             card.innerHTML = `

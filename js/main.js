@@ -17,7 +17,8 @@ function chargerFilms() {
     })
     .then(data => {
       const conteneur = document.getElementById("carousel-films");
-      data.results.slice(0, 10).forEach(film => {
+      conteneur.innerHTML = ""; // Réinitialiser le contenu
+      data.results.slice(0, 8).forEach(film => { // Limiter à 8 films
         const div = document.createElement("div");
         div.className = "min-w-[150px] bg-white rounded-lg shadow-md";
         div.innerHTML = `
@@ -40,7 +41,8 @@ function chargerSeries() {
     })
     .then(data => {
       const conteneur = document.getElementById("carousel-series");
-      data.results.slice(0, 10).forEach(serie => {
+      conteneur.innerHTML = ""; // Réinitialiser le contenu
+      data.results.slice(0, 8).forEach(serie => { // Limiter à 8 séries
         const div = document.createElement("div");
         div.className = "min-w-[150px] bg-white rounded-lg shadow-md";
         div.innerHTML = `
@@ -68,3 +70,30 @@ function chargerCommentaires() {
     conteneur.appendChild(div);
   });
 }
+
+document.getElementById("recherche").addEventListener("input", (e) => {
+  const query = e.target.value.trim();
+  if (query.length > 2) {
+    fetch(`https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&language=fr-FR&query=${query}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Erreur lors de la recherche');
+        return res.json();
+      })
+      .then(data => {
+        const conteneur = document.getElementById("carousel-films");
+        conteneur.innerHTML = ""; // Réinitialiser le contenu
+        data.results.slice(0, 8).forEach(item => {
+          const div = document.createElement("div");
+          div.className = "min-w-[150px] bg-white rounded-lg shadow-md";
+          div.innerHTML = `
+            <img src="${URL_IMAGE}${item.poster_path}" class="rounded-t-lg">
+            <div class="p-2">
+              <p class="text-sm font-semibold text-center">${item.title || item.name}</p>
+            </div>
+          `;
+          conteneur.appendChild(div);
+        });
+      })
+      .catch(error => console.error('Erreur lors de la recherche :', error));
+  }
+});
