@@ -1,5 +1,5 @@
-const API_KEY = 'fb44f61bb09329fa7623088a309d6919';    // joindre La clé API ici 
-const BASE_URL = 'https://api.themoviedb.org/3';
+const API_KEY = 'fb44f61bb09329fa7623088a309d6919'; // Clé API
+const BASE_URL = 'https://api.themoviedb.org/3'; // URL de base
 
 export async function fetchPopularMovies() {
     try {
@@ -8,7 +8,7 @@ export async function fetchPopularMovies() {
         const data = await res.json();
         return data.results;
     } catch (error) {
-        console.error(error);
+        console.error('Erreur fetchPopularMovies:', error);
         return [];
     }
 }
@@ -20,7 +20,7 @@ export async function fetchPopularSeries() {
         const data = await res.json();
         return data.results;
     } catch (error) {
-        console.error(error);
+        console.error('Erreur fetchPopularSeries:', error);
         return [];
     }
 }
