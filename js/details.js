@@ -1,21 +1,37 @@
+// Importation des fonctions utilitaires
 import { getImageUrl } from './api.js';
 import { isFavorite, toggleFavorite } from './favoris.js';
 
+/**
+ * Fonction principale pour afficher les détails d'un film ou d'une série.
+ * @param {Object} data - Données du média (détails, casting, suggestions).
+ * @param {string} type - Type du média ('movie' ou 'tv').
+ */
 export function renderDetailContent(data, type) {
   const { details, credits, similar } = data;
   const detailsPage = document.getElementById('details-page');
   
+  // Vérifiez si les données sont valides avant de les utiliser
+  if (!details) {
+    detailsPage.innerHTML = '<p class="text-red-500">Erreur : Détails non disponibles.</p>';
+    return;
+  }
+  
+  // Génération du contenu HTML pour les détails
   detailsPage.innerHTML = `
     <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Affichage de l'image du média -->
       <div class="lg:w-1/3">
         <img src="${getImageUrl(details.poster_path)}" 
              alt="${details.title || details.name}"
              class="w-full rounded-lg shadow-lg">
       </div>
       
+      <!-- Informations principales -->
       <div class="lg:w-2/3">
         <h1 class="text-3xl font-bold mb-2">${details.title || details.name}</h1>
         
+        <!-- Informations supplémentaires : type, date, durée, note -->
         <div class="flex flex-wrap items-center gap-4 mb-4">
           <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">
             ${type === 'movie' ? 'Film' : 'Série'}
@@ -30,6 +46,7 @@ export function renderDetailContent(data, type) {
           </div>
         </div>
         
+        <!-- Genres -->
         <div class="mb-6">
           <h2 class="text-xl font-semibold mb-2">Genres</h2>
           <div class="flex flex-wrap gap-2">
@@ -39,11 +56,13 @@ export function renderDetailContent(data, type) {
           </div>
         </div>
         
+        <!-- Synopsis -->
         <div class="mb-6">
           <h2 class="text-xl font-semibold mb-2">Synopsis</h2>
           <p class="text-gray-700">${details.overview || 'Aucune description disponible.'}</p>
         </div>
         
+        <!-- Casting principal -->
         ${credits.cast?.length > 0 ? `
         <div class="mb-6">
           <h2 class="text-xl font-semibold mb-2">Casting principal</h2>
@@ -53,6 +72,7 @@ export function renderDetailContent(data, type) {
       </div>
     </div>
     
+    <!-- Suggestions similaires -->
     ${similar?.length > 0 ? `
     <section class="mt-12">
       <h2 class="text-2xl font-semibold mb-4">Suggestions similaires</h2>
@@ -60,10 +80,12 @@ export function renderDetailContent(data, type) {
     </section>
     ` : ''}
     
+    <!-- Section des commentaires -->
     <section class="mt-12">
       <h2 class="text-2xl font-semibold mb-4">Commentaires</h2>
       <div id="comments-container" class="space-y-4 mb-6"></div>
       
+      <!-- Formulaire pour ajouter un commentaire -->
       <form id="comment-form" class="bg-white p-4 rounded-lg shadow">
         <h3 class="font-semibold mb-3">Ajouter un commentaire</h3>
         
@@ -96,72 +118,15 @@ export function renderDetailContent(data, type) {
     </section>
   `;
   
-  // Bouton favori
-  const favoriteBtn = document.createElement('button');
-  favoriteBtn.className = 'absolute top-4 right-4 bg-purple-600 text-white p-2 rounded-full shadow-lg';
-  favoriteBtn.innerHTML = isFavorite(details.id, type) ? '❤️' : '♡';
-  favoriteBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isNowFavorite = toggleFavorite({
-      id: details.id,
-      type,
-      title: details.title || details.name,
-      poster_path: details.poster_path
-    });
-    favoriteBtn.innerHTML = isNowFavorite ? '❤️' : '♡';
-  });
-  detailsPage.querySelector('.lg-w-1\\/3').appendChild(favoriteBtn);
-  
-  // Casting
-  if (credits.cast?.length > 0) {
-    const castContainer = document.getElementById('cast-container');
-    credits.cast.slice(0, 10).forEach(person => {
-      const div = document.createElement('div');
-      div.className = 'flex flex-col items-center min-w-[120px]';
-      div.innerHTML = `
-        <img src="${getImageUrl(person.profile_path, 'w185')}" 
-             class="w-16 h-16 rounded-full object-cover mb-2"
-             alt="${person.name}"
-             onerror="this.src='./assets/placeholder.jpg'">
-        <p class="text-sm font-semibold text-center">${person.name}</p>
-        <p class="text-xs text-gray-600 text-center">${person.character || ''}</p>
-      `;
-      castContainer.appendChild(div);
-    });
-  }
-  
-  // Suggestions similaires
-  if (similar?.length > 0) {
-    const similarContainer = document.getElementById('similar-container');
-    similar.forEach(item => {
-      if (!item.poster_path) return;
-      
-      const card = document.createElement('div');
-      card.className = 'media-card bg-white rounded-lg shadow overflow-hidden';
-      card.innerHTML = `
-        <img src="${getImageUrl(item.poster_path)}" 
-             class="w-full media-poster"
-             alt="${item.title || item.name}">
-        <div class="p-3">
-          <h3 class="font-semibold truncate">${item.title || item.name}</h3>
-        </div>
-      `;
-      
-      card.addEventListener('click', () => showDetails(item.id, type));
-      similarContainer.appendChild(card);
-    });
-  }
-  
-  // Charger les commentaires existants
-  loadComments(details.id);
-  
-  // Configuration du formulaire de commentaire
-  setupCommentForm(details.id, type);
-  
-  // Configuration des étoiles de notation
-  setupRatingStars();
+  // Configuration des fonctionnalités supplémentaires
+  setupCommentForm(details.id, type); // Formulaire de commentaires
+  setupRatingStars(); // Étoiles de notation
+  loadComments(details.id); // Chargement des commentaires existants
 }
 
+/**
+ * Configuration des étoiles de notation.
+ */
 function setupRatingStars() {
   const stars = document.querySelectorAll('.star');
   const ratingInput = document.getElementById('comment-rating');
@@ -190,6 +155,10 @@ function setupRatingStars() {
   });
 }
 
+/**
+ * Chargement des commentaires existants.
+ * @param {number} mediaId - ID du média.
+ */
 function loadComments(mediaId) {
   const comments = JSON.parse(localStorage.getItem(`comments_${mediaId}`)) || [];
   const container = document.getElementById('comments-container');
@@ -212,7 +181,12 @@ function loadComments(mediaId) {
   `).join('');
 }
 
-function setupCommentForm(mediaId) {
+/**
+ * Configuration du formulaire de commentaires.
+ * @param {number} mediaId - ID du média.
+ * @param {string} type - Type du média ('movie' ou 'tv').
+ */
+function setupCommentForm(mediaId, type) {
   const form = document.getElementById('comment-form');
   
   form.addEventListener('submit', (e) => {
@@ -248,3 +222,4 @@ function setupCommentForm(mediaId) {
     document.getElementById('comment-rating').value = '0';
   });
 }
+

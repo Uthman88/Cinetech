@@ -1,6 +1,7 @@
 import { fetchPopularMovies, fetchPopularSeries, fetchAllMovies, fetchAllSeries, fetchMovieDetails, searchContent } from './api.js';
 import { renderPagination } from './pagination.js';
 import { renderFavorites, isFavorite, toggleFavorite } from './favoris.js';
+import { renderDetailContent } from './details.js';
 
 // État global
 const state = {
@@ -15,6 +16,16 @@ const state = {
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
+  const welcomePage = document.getElementById('welcome-page');
+  const mainContent = document.getElementById('main-content');
+
+  // Afficher la page principale après 3 secondes
+  setTimeout(() => {
+    welcomePage.classList.add('hidden'); // Masquer la page de bienvenue
+    mainContent.classList.remove('hidden'); // Afficher le contenu principal
+    showPage('home'); // Afficher la page d'accueil par défaut
+  }, 3000); // Durée de 3 secondes
+
   setupEventListeners();
   await loadHomePage();
   initHeroSlider();
@@ -123,23 +134,20 @@ async function loadHomePage() {
 
 // Affichage d'une page
 function showPage(pageId) {
-  // Sauvegarder la page précédente
-  if (pageId !== 'details') {
-    localStorage.setItem('prevPage', pageId);
-  }
-
-  // Masquer toutes les pages
   document.querySelectorAll('.page').forEach(page => {
-    page.classList.remove('active');
     page.classList.add('hidden');
+    page.classList.remove('active');
   });
 
-  // Afficher la page demandée
   const page = document.getElementById(`${pageId}-page`);
   if (page) {
     page.classList.remove('hidden');
     page.classList.add('active');
-    document.getElementById('page-title').textContent = page.querySelector('h2')?.textContent || 'Cinetech';
+  }
+
+  // Sauvegarder la page précédente
+  if (pageId !== 'details') {
+    localStorage.setItem('prevPage', pageId);
   }
 
   // Afficher/masquer le bouton retour
